@@ -1,0 +1,142 @@
+
+Absolutely! Below is **individual documentation for each layer** — **Bronze**, **Silver**, and **Gold** — formatted clearly and professionally, suitable for inclusion in a data warehouse design document or knowledge base.
+
+---
+
+## 📄 **Bronze Layer Documentation**
+
+---
+
+### **Purpose**
+
+The **Bronze Layer** acts as the raw data landing zone. It stores data ingested directly from source systems with **minimal or no transformations**. This layer ensures **data traceability**, **lineage**, and **reprocessing capability**.
+
+### **Characteristics**
+
+* Raw, source-level format
+* Schema closely resembles source system
+* Partitioned/staged by ingestion date (optional)
+* Used primarily for **auditing, recovery, and traceability**
+
+### **Typical Sources**
+
+* ERP Systems
+* CRM Applications
+* Flat files / APIs / Logs
+
+### **Example Tables**
+
+| Table Name          | Description                           |
+| ------------------- | ------------------------------------- |
+| `BRONZE.crm_raw`    | Raw customer data from CRM system     |
+| `BRONZE.erp_orders` | Unprocessed sales order data from ERP |
+
+---
+
+### **Best Practices**
+
+* Use append-only strategy
+* Never delete/update data directly
+* Include ingestion timestamp for traceability
+
+---
+
+## 📄 **Silver Layer Documentation**
+
+---
+
+### **Purpose**
+
+The **Silver Layer** is the **cleansing and integration** layer. It refines raw Bronze data by applying **business rules**, **joins**, **data quality checks**, and **light transformations**, producing **clean, usable datasets**.
+
+### **Characteristics**
+
+* Standardized schema
+* Joins across multiple raw data sources
+* Handles missing values, duplicates, inconsistent types
+* Preserves historical changes (if needed)
+
+### **Example Transformations**
+
+* Join CRM and ERP customer data
+* Normalize product attributes
+* Filter out inactive or incomplete records
+
+### **Example Tables**
+
+| Table Name                 | Description                            |
+| -------------------------- | -------------------------------------- |
+| `SILVER.crm_cust_info`     | Cleaned and standardized customer data |
+| `SILVER.erp_loc_a101`      | Enhanced location mapping              |
+| `SILVER.crm_sales_details` | Unified sales transaction records      |
+
+---
+
+### **Best Practices**
+
+* Use surrogate keys if necessary
+* Enrich data with auxiliary lookups
+* Ensure data type consistency
+
+---
+
+## 📄 **Gold Layer Documentation**
+
+---
+
+### **Purpose**
+
+The **Gold Layer** provides **business-friendly, analytics-ready** data using a **dimensional model (star schema)**. It's optimized for **reporting, BI tools, and dashboards**.
+
+### **Characteristics**
+
+* Fact and Dimension tables
+* Uses surrogate keys for joins
+* Denormalized for performance
+* Designed around business processes
+
+---
+
+### **Modeling Technique**
+
+* **Star Schema**
+
+  * Central **Fact Table**: Stores transactional metrics
+  * Surrounding **Dimension Tables**: Provide context (who, what, where, when)
+
+---
+
+### **Tables**
+
+| Table Name               | Type      | Description                                |
+| ------------------------ | --------- | ------------------------------------------ |
+| `DWH.GOLD.fact_sales`    | Fact      | Sales transactions (quantity, price, etc.) |
+| `DWH.GOLD.dim_customers` | Dimension | Customer profile and demographic data      |
+| `DWH.GOLD.dim_products`  | Dimension | Product hierarchy and attributes           |
+
+---
+
+### **Sample ETL Logic**
+
+* Load dimensions first (`dim_customers`, `dim_products`)
+* Then load `fact_sales` referencing surrogate keys from dimensions
+* Use `ROW_NUMBER()` for generating surrogate keys
+
+---
+
+### **Stored Procedure**
+
+* **`DWH.GOLD.sp_load_gold`**:
+  Automates the loading of GOLD layer using pre-truncated inserts.
+
+---
+
+### **Best Practices**
+
+* Ensure referential integrity between fact and dimensions
+* Avoid nulls in foreign keys
+* Add indexes on surrogate keys
+
+---
+
+Would you like this exported as Markdown, PDF, or in a Word doc format for documentation purposes?
