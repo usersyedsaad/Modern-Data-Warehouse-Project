@@ -1,1 +1,6 @@
+This is the advance data analytics project after building the data warehouse and doing the exploratory data analysis
+
+Procedure
+--First step, analyze change over time
+  -- Any aggregated measure with date column.
 
